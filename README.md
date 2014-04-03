@@ -3,6 +3,8 @@ cilight
 
 Java program for Raspberry Pi (pi4j) to control a continuous integration traffic light via the GPIO pins.
 
+Copyright &copy; 2014, by Christopher A. Mosher, Shelton, CT, USA.
+
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
