@@ -29,11 +29,10 @@ public class ContinuousIntegrationServer {
 
     public ContinuousIntegrationServer() {
         final Set<String> lJobs = new HashSet<String>(5,1.0F);
-        lJobs.add("dynamix_continuous_compile");
-        lJobs.add("p02_01_package");
-        lJobs.add("p02_03_test");
-        lJobs.add("p02_04_integration_test");
-        lJobs.add("p02_06_uat");
+        lJobs.add("p01_02_deploy");
+        lJobs.add("p01_03_test");
+        lJobs.add("p01_04_integration");
+        lJobs.add("p01_05_uat");
         this.jobs = Collections.<String>unmodifiableSet(lJobs);
 
         final List<ContinuousIntegrationState> lLevels = new ArrayList<ContinuousIntegrationState>(3);
