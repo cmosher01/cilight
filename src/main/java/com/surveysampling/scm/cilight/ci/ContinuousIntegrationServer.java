@@ -30,8 +30,10 @@ public class ContinuousIntegrationServer {
     public ContinuousIntegrationServer(boolean testMode) {
         this.testMode = testMode;
         final Set<String> lJobs = new HashSet<String>(5,1.0F);
-        lJobs.add("p01_01_flow");
-        lJobs.add("p02_01_flow");
+        lJobs.add("p01_02_deploy");
+        lJobs.add("p01_03_test");
+        lJobs.add("p02_03_integration");
+        lJobs.add("p02_04_uat");
         this.jobs = Collections.<String>unmodifiableSet(lJobs);
 
         final List<ContinuousIntegrationState> lLevels = new ArrayList<ContinuousIntegrationState>(3);
@@ -64,7 +66,7 @@ public class ContinuousIntegrationServer {
 
     private static URL buildResultUrl(final String jobName) {
         final StringBuilder sb = new StringBuilder(128);
-        sb.append(URL_CI).append("/job/").append(jobName).append("/lastBuild/api/xml/result");
+        sb.append(URL_CI).append("/job/").append(jobName).append("/lastBuild/api/xml?xpath=mavenModuleSetBuild/result");
         try {
             return new URL(sb.toString());
         } catch (final MalformedURLException e) {
