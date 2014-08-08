@@ -14,25 +14,24 @@ import java.util.regex.Pattern;
  */
 public class ContinuousIntegrationServer {
     private static final String URL_CI = "http://ctjenkinsm01.surveysampling.com:8080";
+    private static final Pattern RESULT_PATTERN = Pattern.compile("<result>(.*)</result>");
 
     private final Set<String> jobs;
     private final List<ContinuousIntegrationState> levels;
-
-
+    private final boolean testMode;
 
     public static void main(final String... args) {
-        ContinuousIntegrationServer srv = new ContinuousIntegrationServer();
+        ContinuousIntegrationServer srv = new ContinuousIntegrationServer(false);
         final ContinuousIntegrationState state = srv.getState();
         System.out.println(state);
         System.out.flush();
     }
 
-    public ContinuousIntegrationServer() {
+    public ContinuousIntegrationServer(boolean testMode) {
+        this.testMode = testMode;
         final Set<String> lJobs = new HashSet<String>(5,1.0F);
-        lJobs.add("p01_02_deploy");
-        lJobs.add("p01_03_test");
-        lJobs.add("p01_04_integration");
-        lJobs.add("p01_05_uat");
+        lJobs.add("p01_01_flow");
+        lJobs.add("p02_01_flow");
         this.jobs = Collections.<String>unmodifiableSet(lJobs);
 
         final List<ContinuousIntegrationState> lLevels = new ArrayList<ContinuousIntegrationState>(3);
@@ -56,7 +55,7 @@ public class ContinuousIntegrationServer {
         return ContinuousIntegrationState.UNKNOWN;
     }
 
-    private static ContinuousIntegrationState getStateForJob(final String jobName) {
+    private ContinuousIntegrationState getStateForJob(final String jobName) {
         final URL urlJenkins = buildResultUrl(jobName);
         final String xmlResult = fetchUrl(urlJenkins);
         final String result = getStateStringFromResultXml(xmlResult);
@@ -65,7 +64,7 @@ public class ContinuousIntegrationServer {
 
     private static URL buildResultUrl(final String jobName) {
         final StringBuilder sb = new StringBuilder(128);
-        sb.append(URL_CI).append("/job/").append(jobName).append("/lastBuild/api/xml?xpath=mavenModuleSetBuild/result");
+        sb.append(URL_CI).append("/job/").append(jobName).append("/lastBuild/api/xml/result");
         try {
             return new URL(sb.toString());
         } catch (final MalformedURLException e) {
@@ -74,6 +73,7 @@ public class ContinuousIntegrationServer {
     }
 
     private static String fetchUrl(final URL url) {
+        System.out.printf("%s - Fetching %s\n", new Date(), url);
         final StringBuilder sb = new StringBuilder(32);
         final URLConnection connection;
         BufferedReader in = null;
@@ -100,12 +100,16 @@ public class ContinuousIntegrationServer {
         return sb.toString();
     }
 
-    private static String getStateStringFromResultXml(final String xmlResult) {
-        final Pattern pat = Pattern.compile("<result>(.*)</result>");
-        final Matcher match = pat.matcher(xmlResult);
-        if (!match.matches()) {
+    private String getStateStringFromResultXml(final String xmlResult) {
+        if (testMode) {
+            System.out.println(xmlResult);
+        }
+        final Matcher match = RESULT_PATTERN.matcher(xmlResult);
+        if (!match.find()) {
+            System.out.printf("%s - no match found\n", new Date());
             return "";
         }
+        System.out.printf("%s - Result: %s\n", new Date(), match.group(1));
 
         return match.group(1);
     }
