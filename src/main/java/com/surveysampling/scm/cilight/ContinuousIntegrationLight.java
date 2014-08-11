@@ -49,7 +49,7 @@ public class ContinuousIntegrationLight {
             return;
         }
 
-        final ContinuousIntegrationServer ci = new ContinuousIntegrationServer();
+        final ContinuousIntegrationServer ci = new ContinuousIntegrationServer(this.testMode);
         final TrafficLight trafficLight = new TrafficLight(this.testMode);
 
 
