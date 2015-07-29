@@ -9,11 +9,6 @@ description = 'Java program for Raspberry Pi (pi4j) to control a continuous inte
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-repositories {
-     maven { url "http://ctnexus01.surveysampling.com/content/groups/maven" }
-     maven { url "http://repo.maven.apache.org/maven2" }
-}
-
 dependencies {
     compile group: 'com.pi4j', name: 'pi4j-core', version:'0.0.5'
 }
